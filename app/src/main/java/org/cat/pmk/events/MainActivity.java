@@ -1,8 +1,8 @@
 package org.cat.pmk.events;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -11,18 +11,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-
-import org.cat.pmk.events.datamodel.Order;
-import org.cat.pmk.events.datamodel.OrderAdapter;
-import org.cat.pmk.events.fragments.FragmentInstalledBaseManager;
 import org.cat.pmk.events.fragments.FragmentMainWindow;
-import org.cat.pmk.events.fragments.FragmentNewOrder;
-import org.cat.pmk.events.fragments.FragmentOrders;
-import org.cat.pmk.events.sfdc.SfdcRestApi;
-import org.cat.pmk.events.sfdc.QueryResponseHandler;
+import org.cat.pmk.events.fragments.FragmentNabozenstwa;
+import org.cat.pmk.events.fragments.FragmentSpowiedz;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -34,11 +25,9 @@ public class MainActivity extends AppCompatActivity
 
     public static String accountID2 = "ACC-MIRO-123";
 
-    private static OrderAdapter orderAdapter;
 
     public static FragmentManager fragmentManager;
 
-    private static final ArrayList<Order> orders = new ArrayList<>();
 
 
     @Override
@@ -66,19 +55,6 @@ public class MainActivity extends AppCompatActivity
         MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).commit();
 
 
-        //refresh session ID
-        SfdcRestApi.refreshSessionId(this.getApplicationContext(), new QueryResponseHandler() {
-            @Override
-            public void handleResponse(JSONObject response) {
-                System.out.println("RAW: " + response);
-
-                try {
-                    SfdcRestApi.sessionId = response.getString("access_token");
-                } catch (Exception e) {
-                    System.err.println("ERROR: " + e.getLocalizedMessage());
-                }
-            }
-        });
     }
 
     @Override
@@ -119,41 +95,22 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_installed_base) {
+        if (id == R.id.nav_nabozenstwa) {
+            MainActivity.this.setTitle(getString(R.string.nav_nabozenstwa));
+
+            // enable a fragment
+            FragmentNabozenstwa fragment = new FragmentNabozenstwa(getApplicationContext());
+            MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).commit();
+        } else if (id == R.id.nav_spowiedz) {
             MainActivity.this.setTitle(getString(R.string.nav_spowiedz));
 
             // enable a fragment
-            FragmentInstalledBaseManager fragment = new FragmentInstalledBaseManager(getApplicationContext());
+            FragmentSpowiedz fragment = new FragmentSpowiedz(getApplicationContext());
             MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).commit();
+        } else if (id == R.id.nav_terminy) {
 
+        } else if (id == R.id.nav_rekolekcje) {
 
-        } else if (id == R.id.nav_new_order) {
-            // set title
-            MainActivity.this.setTitle(getString(R.string.nav_nabozenstwa));
-
-            // enable a fragment
-            FragmentNewOrder fragment = new FragmentNewOrder();
-            MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).commit();
-        } else if (id == R.id.nav_orders) {
-            MainActivity.this.setTitle(getString(R.string.nav_nabozenstwa));
-
-            // enable a fragment
-            FragmentOrders fragment = new FragmentOrders(getApplicationContext());
-            MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).commit();
-        } else if (id == R.id.nav_share) {
-            // refresh session ID
-            SfdcRestApi.refreshSessionId(this.getApplicationContext(), new QueryResponseHandler() {
-                @Override
-                public void handleResponse(JSONObject response) {
-                    System.out.println("RAW: " + response);
-
-                    try {
-                        SfdcRestApi.sessionId = response.getString("access_token");
-                    } catch (Exception e) {
-                        System.err.println("ERROR: " + e.getLocalizedMessage());
-                    }
-                }
-            });
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

@@ -1,15 +1,11 @@
-package org.cat.pmk.events.sfdc;
-
-import android.widget.Toast;
+package org.cat.pmk.events.api;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.Iterator;
-
 import cz.msebera.android.httpclient.Header;
 
-public class QueryResponseHandler extends com.loopj.android.http.JsonHttpResponseHandler {
+public class ApiResponseHandler extends com.loopj.android.http.JsonHttpResponseHandler {
 
     @Override
     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {

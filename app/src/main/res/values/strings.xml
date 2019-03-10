@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PMK</string>
+    <string name="app_name">Polska Misja</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -11,7 +11,21 @@
 
     <string name="nav_nabozenstwa">Nabożeństwa</string>
     <string name="nav_spowiedz">Spowiedź</string>
+    <string name="nav_terminy">Spotkania</string>
+
     <string name="nav_rekolekcje">Rekolekcje</string>
+
     <string name="nav_send">Inne</string>
+
+    <string-array name="distance_array">
+        <item>25km</item>
+        <item>50km</item>
+        <item>100km</item>
+        <item>200km</item>
+    </string-array>
+
+    <string name="slectedDistanceRestriction">slectedDistanceRestriction</string>
+
+
 
 </resources>

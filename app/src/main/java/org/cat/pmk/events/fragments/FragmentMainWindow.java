@@ -2,13 +2,11 @@ package org.cat.pmk.events.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import org.cat.pmk.events.MainActivity;
 import org.cat.pmk.events.R;
 
 public class FragmentMainWindow extends Fragment {
@@ -34,8 +32,7 @@ public class FragmentMainWindow extends Fragment {
             @Override
             public void onClick(View view) {
                 // enable a fragment
-                FragmentNewOrder fragment = new FragmentNewOrder();
-                MainActivity.fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).commit();
+
             }
         });
 

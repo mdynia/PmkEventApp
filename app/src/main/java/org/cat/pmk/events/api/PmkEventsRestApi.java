@@ -1,48 +1,45 @@
-package org.cat.pmk.events.sfdc;
-
-import android.content.Context;
+package org.cat.pmk.events.api;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.ResponseHandlerInterface;
 
-import org.json.JSONObject;
-
-import cz.msebera.android.httpclient.entity.StringEntity;
-
-public class SfdcRestApi {
+public class PmkEventsRestApi {
 
     public static String sessionId = "tbd";
 
-    private static final String BASE_URL = "https://service1demo.my.salesforce.com";
+    private static final String BASE_URL = "http://www.pmk-bielefeld.de";
 
     private static AsyncHttpClient client = new AsyncHttpClient();
 
 
-    public static void refreshSessionId(Context ctx, AsyncHttpResponseHandler responseHandler) {
-        String grant_type = "password";
-        String client_id = "3MVG98_Psg5cppyZ77hzuEPMNpdW79s70_NsbJQZTf8IlBRO_Ud0APfa8jsRBQasaWrfnzfiZT1o4CyccfHF_";
-        String client_secret = "1820053330651826959";
-        String username = "mdynia@gms-online.de-demo";
-        String password = "EAI$-kg,BKNalDH01--DIDAznRiH31iFLZXnScUmTS8LD9skz";
+
+    public static void getEventsByGeo(float geoLat, float geoLon, int distanceIdx, AsyncHttpResponseHandler responseHandler) {
+        System.out.println("Selected distance (index):  " + distanceIdx);
+        int distance = 25;
+        switch (distanceIdx) {
+            case 0:
+                distance = 25;
+                break;
+            case 1:
+                distance = 50;
+                break;
+            case 2:
+                distance = 100;
+                break;
+            case 3:
+                distance = 200;
+                break;
+        }
+
+        System.out.println("GEO lat: " + geoLat);
+        System.out.println("GEO lon: " + geoLon);
+        System.out.println("GEO dis: " + distance);
 
 
-        RequestParams params = new RequestParams();
-        params.put("grant_type", grant_type);
-        params.put("client_id", client_id);
-        params.put("client_secret", client_secret);
-        params.put("username", username);
-        params.put("password", password);
-        client.post("https://login.salesforce.com/services/oauth2/token", params, responseHandler);
-    }
-
-
-    public static void soqlQuery(String query, AsyncHttpResponseHandler responseHandler) {
-        System.out.println("QUERY: " + query);
-        client.addHeader("Authorization", "Bearer " + sessionId);
         RequestParams params = null;
-        String url = getAbsoluteUrl("/services/data/v26.0/query/?q=" + encode(query));
+        String url = getAbsoluteUrl("/pmkEvents/api/getEventsByGeo.php?days=14&lat="+ String.valueOf(geoLat)+"&lon="+String.valueOf(geoLon)+ "&dis="+String.valueOf(distance));
 
         System.out.println("REST URL: " + url);
         client.get(url, params, responseHandler);
