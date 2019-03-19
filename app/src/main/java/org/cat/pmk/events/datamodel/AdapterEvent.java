@@ -25,6 +25,7 @@ public class AdapterEvent extends ArrayAdapter<Event> implements View.OnClickLis
     private static class ViewHolder {
         TextView txtTitle;
         TextView txtGodzina;
+        TextView txtData;
         TextView txtAdres;
         ImageView iconShare;
         ImageView iconNav;
@@ -44,8 +45,6 @@ public class AdapterEvent extends ArrayAdapter<Event> implements View.OnClickLis
         Object object= getItem(position);
         Event event =(Event)object;
 
-
-
         CharSequence text = "";
         switch (v.getId())
         {
@@ -62,13 +61,15 @@ public class AdapterEvent extends ArrayAdapter<Event> implements View.OnClickLis
                 }
 
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mapIntent.setPackage("com.google.android.apps.maps");
-                context.startActivity(mapIntent);
+                mContext.startActivity(mapIntent);
                 break;
 
             case R.id.ib_row_icon_share:
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 sendIntent.setType("text/plain");
                 sendIntent.putExtra(Intent.EXTRA_TEXT, event.getTitle()
                         + ", " + event.getStartDateDescription()
@@ -80,7 +81,7 @@ public class AdapterEvent extends ArrayAdapter<Event> implements View.OnClickLis
                 sendIntent.putExtra(Intent.EXTRA_CC, "");
                 sendIntent.putExtra(Intent.EXTRA_BCC, "");
 
-                context.startActivity(sendIntent);
+                mContext.startActivity(sendIntent);
                 break;
 
         }
@@ -106,6 +107,7 @@ public class AdapterEvent extends ArrayAdapter<Event> implements View.OnClickLis
             convertView = inflater.inflate(R.layout.row_nabozenstwo, parent, false);
             viewHolder.txtTitle = (TextView) convertView.findViewById(R.id.ib_row_title);
             viewHolder.txtGodzina = (TextView) convertView.findViewById(R.id.ib_row_godzina);
+            viewHolder.txtData = (TextView) convertView.findViewById(R.id.ib_row_data);
             viewHolder.txtAdres = (TextView) convertView.findViewById(R.id.ib_row_adres);
             viewHolder.iconShare    = (ImageView) convertView.findViewById(R.id.ib_row_icon_share);
             viewHolder.iconNav    = (ImageView) convertView.findViewById(R.id.ib_row_icon_nav);
@@ -125,11 +127,12 @@ public class AdapterEvent extends ArrayAdapter<Event> implements View.OnClickLis
 
         viewHolder.txtTitle.setText(event.getTitle());
         viewHolder.txtGodzina.setText(event.getStartDateDescription());
+        viewHolder.txtData.setText(event.getStartDate());
         String address = event.getAddress();
         if (event.getDistance() > 1) {
-            address += ", ~"+event.getDistance()+" km";
+            address += " \nOdległość ok."+event.getDistance()+" km";
         } else {
-            address += ", mniej niż 1 km";
+            address += " \nBardzo blisko Ciebie.";
         }
         viewHolder.txtAdres.setText(address);
 

@@ -116,6 +116,43 @@ public class Event {
     }
 
 
+    public String getStartDate() {
+        String dateString = "";
+        String timeString = "";
+        int dayOfWeek = 1;
+        int dayOfMonth = 1;
+        int year = 1;
+        int month = 1;
+
+        try {
+            dateString = record.getString("date_start");
+            timeString = record.getString("time_start");
+
+            // cut seconds
+            timeString = timeString.substring(0, Math.min(timeString.length(),5));
+
+
+            // check day of week
+            Date dateStart = new SimpleDateFormat("yyyy-M-dd").parse(dateString);
+            Calendar c = Calendar.getInstance();
+            c.setTime(dateStart);
+            dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+            dayOfMonth = c.get(Calendar.DAY_OF_MONTH);
+            year = c.get(Calendar.YEAR);
+            month = c.get(Calendar.MONTH);
+
+        } catch (Exception e) {
+            System.err.println("ERROR: " + e);
+        }
+
+
+
+        String result = dayOfMonth + ". " + months.get(month) + " " + year;
+
+        return result;
+    }
+
+
     public String getStartDateDescription() {
         String dateString = "";
         String timeString = "";
@@ -145,7 +182,7 @@ public class Event {
 
 
 
-        String result = daysOfWeek.get(dayOfWeek) +", " + dayOfMonth + " " + months.get(month)+ ", " + timeString ;
+        String result = daysOfWeek.get(dayOfWeek) +", " + timeString ;
 
         return result;
     }

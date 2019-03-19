@@ -4,14 +4,17 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 
+import org.cat.pmk.events.MainActivity;
 import org.cat.pmk.events.R;
 import org.cat.pmk.events.api.ApiResponseHandler;
 import org.cat.pmk.events.api.PmkEventsRestApi;
@@ -22,11 +25,15 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public abstract class AbstractFragmentByDistance extends Fragment implements AdapterView.OnItemSelectedListener {
+public class FragmentEventsByDistance extends Fragment implements AdapterView.OnItemSelectedListener {
 
     private static final ArrayList<Event> EVENTS = new ArrayList<>();
 
     ListView listView;
+
+    View fragmentView;
+
+    int backgroundImageResourceId = R.drawable.kosciol_jasne_wnetrze;
 
     public Context ctx;
 
@@ -36,13 +43,29 @@ public abstract class AbstractFragmentByDistance extends Fragment implements Ada
 
     private float geoLat = 51.755828f;
     private float geoLon = 8.777529f;
+
     private int distanceIndex = 0;
+
+    public void setContext(Context context) {
+        this.ctx = context;
+    }
+
+    public void setEventTypeFilter(boolean filter) {
+        this.spowiedzFilter = filter;
+    }
+
+    public void setBackground(int backgroundImageResourceId) {
+        this.backgroundImageResourceId = backgroundImageResourceId;
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fgmt_events_bydistance, container, false);
+        fragmentView =  inflater.inflate(R.layout.fgmt_events_bydistance, container, false);
+
+        return fragmentView;
     }
 
 
@@ -51,11 +74,12 @@ public abstract class AbstractFragmentByDistance extends Fragment implements Ada
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         // Setup any handles to view objects here
-        // EditText etFoo = (EditText) view.findViewById(R.id.etFoo);
 
+        // set background image
+        ImageView imageViewBackground = (ImageView) view.findViewById(R.id.imageViewBackground);
+        imageViewBackground.setImageResource(backgroundImageResourceId);
 
         listView = view.findViewById(R.id.list_ib);
-
 
         //populate spinner
         Spinner spinner = (Spinner) view.findViewById(R.id.distance_spinner);
@@ -72,14 +96,11 @@ public abstract class AbstractFragmentByDistance extends Fragment implements Ada
             spinner.setSelection(distanceIndex);
         }
 
-
-        // fetch events from server
-        PmkEventsRestApi.getEventsByGeo(geoLat, geoLon, distanceIndex, new ApiResponseHandler() {
-            @Override
-            public void handleResponse(JSONObject response) {
-                populateEventList(ctx, listView, response);
-            }
-        });
+        // fetch events from server again
+        SharedPreferences prefsGeo = ctx.getSharedPreferences(MainActivity.PREFERENCES_GEO, Context.MODE_PRIVATE);
+        geoLat = prefsGeo.getFloat("lat", 51.75f);
+        geoLon = prefsGeo.getFloat("lon", 8.77f);
+        Log.d("onViewCreated", "read location : lat=" + geoLat + ", lon=" + geoLon);
 
     }
 
@@ -88,7 +109,6 @@ public abstract class AbstractFragmentByDistance extends Fragment implements Ada
         EVENTS.clear();
 
         // parse results
-
         try {
             if (response != null) {
                 JSONArray records = response.getJSONArray("records");
@@ -117,7 +137,7 @@ public abstract class AbstractFragmentByDistance extends Fragment implements Ada
     public void onItemSelected(AdapterView<?> parent, View view,
                                int pos, long id) {
 
-        // store spinner selected possition in share
+        // store spinner selected position in share
         SharedPreferences.Editor editor = view.getContext().getSharedPreferences(getString(R.string.slectedDistanceRestriction), Context.MODE_PRIVATE).edit();
         editor.putInt(getString(R.string.slectedDistanceRestriction), pos);
         editor.apply();
@@ -125,6 +145,11 @@ public abstract class AbstractFragmentByDistance extends Fragment implements Ada
         distanceIndex  = pos;
 
         // fetch events from server again
+        SharedPreferences prefsGeo = ctx.getSharedPreferences(MainActivity.PREFERENCES_GEO, Context.MODE_PRIVATE);
+        geoLat = prefsGeo.getFloat("lat", 51.75f);
+        geoLon = prefsGeo.getFloat("lon", 8.77f);
+        Log.d("tag", "read location: lat=" + geoLat + ", lon=" + geoLon);
+
         PmkEventsRestApi.getEventsByGeo(geoLat, geoLon, distanceIndex, new ApiResponseHandler() {
             @Override
             public void handleResponse(JSONObject response) {

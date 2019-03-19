@@ -4,9 +4,13 @@
     <color name="colorPrimary">#141a21</color>
     <color name="colorPrimaryWhite">#F4F4F4</color>
 
-    <color name="colorAccent">#8CCBE6</color>
+    <color name="colorAccent">#5395B4</color>
 
     <color name="colorBackgroundPrimary">#FFFFFF</color>
     <color name="colorBackgroundSecondary">#f4f4f4</color>
+
+
+    <color name="colorFontMainPage">#111111</color>
+
 
 </resources>
